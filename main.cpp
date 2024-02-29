@@ -14,6 +14,7 @@
 #include <fstream>
 #include <regex>
 
+const char* OVERWATCH_EXE = "Overwatch.exe";
 
 DWORD GetProcessId(const char* cProcessName)
 {
@@ -65,14 +66,14 @@ int main()
 	system("cls");
 
 	std::cout << skCrypt("\n Waiting for Overwatch 2...\n\n");
+	HWND hwnd = NULL;
 	while (hwnd == NULL)
 	{
 		hwnd = SpoofFindWindowA("TankWindowClass", 0);
 		Sleep(100);
 	}
-	HWND tWn1d = SpoofFindWindowA("TankWindowClass", 0);
-	RECT rect;
-	DWORD pidow2 = GetProcessId("Overwatch.exe");
+
+	DWORD pidow2 = GetProcessId("OVERWATCH_EXE");
 	std::cout << skCrypt(" PID: ");
 	std::cout << pidow2;
 	
@@ -93,7 +94,9 @@ int main()
 		_beginthread((_beginthread_proc_type)overlay_thread, 0, 0);
 		_beginthread((_beginthread_proc_type)velocity_thread, 0, 0);
 
-		while (SpoofFindWindowA("TankWindowClass", NULL))
+		HWND tankWindow = SpoofFindWindowA("TankWindowClass", NULL);
+		int iterations = 0;
+		while (tankWindow && iterations < 10000)
 		{
 			BYTE AOB[] = "\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\xFF\xFF\x02\x00\x01\x00\x00\x00\x00\x00\x00\x00\x00";
 			std::string MASK = "??xx??xx?xxx?xxxxxxxxxxxxxxx???";
@@ -111,6 +114,7 @@ int main()
 			if (GetKeyRandomized(Config::closekey)) {
 				exit(0);
 			}
+			iterations++;
 		}
 	}
 	exit(2);
